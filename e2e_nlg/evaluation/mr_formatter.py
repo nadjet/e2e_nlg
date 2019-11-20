@@ -33,29 +33,29 @@ class MR_Formatter:
 
 
     def get_customer_rating(self):
-        pattern = r"^.*customer rating is ([^\.]+)\..*$"
+        pattern = r"^.*customer rating ([^,]+),?.*$"
         if re.match(pattern, self.input_value):
             return re.sub(pattern, r"\1", self.input_value)
         return ""
 
 
     def get_near(self):
-        pattern = r"^.*near ([^\.]+)\..*$"
+        pattern = r"^.*near ([^,]+),?.*$"
         if re.match(pattern, self.input_value):
             return "YYY"
         return ""
 
 
     def get_area(self):
-        pattern = r"^.*located in the ([^\.]+)\..*$"
+        pattern = r"^.*area ([^,]+),?.*$"
         if re.match(pattern, self.input_value):
             return re.sub(pattern, r"\1", self.input_value)
         return ""
 
 
     def get_family_friendly(self):
-        positive_pattern = r"^.*is family friendly.*$"
-        negative_pattern = r"^.*is not family friendly.*$"
+        positive_pattern = r"^.*family friendly yes.*$"
+        negative_pattern = r"^.*family friendly no.*$"
         if re.match(positive_pattern, self.input_value):
             return "yes"
         elif re.match(negative_pattern, self.input_value):
@@ -64,18 +64,18 @@ class MR_Formatter:
 
 
     def get_price_range(self):
-        pattern = r"^.*price range is ([^\.]+)\..*$"
+        pattern = r"^.*price range ([^,]+),?.*$"
         if re.match(pattern, self.input_value):
             return re.sub(pattern, r"\1", self.input_value)
         return ""
 
 
     def get_venue_type(self):
-        if "a pub." in self.input_value:
+        if " pub " in self.input_value:
             return "pub"
-        elif "a coffee shop" in self.input_value:
+        elif " coffee shop " in self.input_value:
             return "coffee shop"
-        elif "a restaurant." in self.input_value:
+        elif " restaurant " in self.input_value:
             return "restaurant"
         return ""
 
@@ -122,12 +122,10 @@ class MR_Formatter:
             if near != "":
                 attributes.append("near[{}]".format(near))
 
-            print(row["input"], ", ".join(attributes))
-
-            new_row = {"input": ", ".join(attributes), "output": row["output"], "target": row["target"]}
+            new_row = {"input": ", ".join(sorted(attributes)),"output": row["output"], "target": row["target"]}
 
             rows.append(new_row)
 
         self.output_df = pd.DataFrame(rows)
 
-        self.output_df.to_csv(os.path.join(self.output_path, "mr_e2e2_nlg.csv"), index=False, sep="\t", encoding="utf-8")
+        self.output_df.to_csv(self.output_path, index=False, sep="\t", encoding="utf-8")

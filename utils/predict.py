@@ -20,8 +20,7 @@ def select_topk(outp, k=5):
     vals,idxs = probs.topk(k, dim=-1)
     return idxs[torch.randint(k, (1,))]
 
-'''
-def decode(model, inp):
+def decode(model, inp,p=0.5):
     inp = inp[None]
     bs, sl = inp.size()
     hid,enc_out = model.encoder(bs, inp)
@@ -31,13 +30,14 @@ def decode(model, inp):
     res = []
     for i in range(model.out_sl):
         hid, outp = model.decoder(dec_inp, hid, enc_att, enc_out)
-        #dec_inp = select_nucleus(outp[0], p=0.5)
-        dec_inp = select_topk(outp[0], k=1)
+        dec_inp = select_nucleus(outp[0], p)
+        #dec_inp = select_topk(outp[0], k=1)
         res.append(dec_inp)
         if (dec_inp==model.pad_idx).all(): break
     return torch.cat(res)
-'''
 
+
+'''
 def decode(model, inp):
     inp = inp[None]
     bs, sl = inp.size()
@@ -47,17 +47,18 @@ def decode(model, inp):
     res = []
     for i in range(model.max_output_length):
         hid, outp = model.decoder(dec_inp, hid)
-        #dec_inp = select_nucleus(outp[0], p=0.5)
-        dec_inp = select_topk(outp[0], k=1)
+        dec_inp = select_nucleus(outp[0], p=0.5)
+        #dec_inp = select_topk(outp[0], k=1)
         res.append(dec_inp)
         if (dec_inp==model.pad_idx).all(): break
     return torch.cat(res)
+'''
 
-def predict_with_decode(learn, x, y):
+def predict_with_decode(learn, x, y, p=0.5):
     learn.model.eval()
     ds = learn.data.train_ds
     with torch.no_grad():
-        out = decode(learn.model, x)
+        out = decode(learn.model, x,p)
         rx = ds.x.reconstruct(x)
         ry = ds.y.reconstruct(y)
         rz = ds.y.reconstruct(out)
