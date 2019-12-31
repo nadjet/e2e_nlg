@@ -1,7 +1,17 @@
 # Add any directories, files, or patterns you don't want to be tracked by version control
 
+*.pth
+*.pkl
+models/classifier
+models
+gitignore
 gitignore/**
-seq2seq_venv/**
+seq2seq_venv
+.*/**
+*.pth
+*.pkl
+**/*.pth
+**/*.pkl
 
 **/*.pyc
 **/libs/**

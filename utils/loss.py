@@ -1,4 +1,3 @@
-import torch
 from fastai.text import CrossEntropyFlat,F
 
 class Loss:

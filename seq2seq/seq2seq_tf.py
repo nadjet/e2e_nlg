@@ -1,9 +1,10 @@
-from fastai.text import nn,one_param
+from fastai.text import nn, one_param
 import random
 import torch
 
+
 class Seq2SeqRNN_tf(nn.Module):
-    def __init__(self, emb_enc, emb_dec, hidden_layer_size, max_output_length, nl=2, bos_idx=0, pad_idx=1):
+    def __init__(self, emb_enc, emb_dec, hidden_layer_size, max_output_length, nl=1, bos_idx=0, pad_idx=1):
         super().__init__()
         self.nl, self.hidden_layer_size, self.max_output_length = nl, hidden_layer_size, max_output_length
         self.bos_idx, self.pad_idx = bos_idx, pad_idx
@@ -13,13 +14,17 @@ class Seq2SeqRNN_tf(nn.Module):
 
         self.emb_enc = emb_enc
         self.emb_enc_drop = nn.Dropout(0.15)
+        # self.gru_enc = nn.GRU(self.em_sz_enc, hidden_layer_size, num_layers=nl,
+        #                      dropout=0.25, batch_first=True)
         self.gru_enc = nn.GRU(self.em_sz_enc, hidden_layer_size, num_layers=nl,
-                              dropout=0.25, batch_first=True)
+                              batch_first=True)
         self.out_enc = nn.Linear(hidden_layer_size, self.em_sz_dec, bias=False)
 
         self.emb_dec = emb_dec
+        # self.gru_dec = nn.GRU(self.em_sz_dec, self.em_sz_dec, num_layers=nl,
+        #                      dropout=0.1, batch_first=True)
         self.gru_dec = nn.GRU(self.em_sz_dec, self.em_sz_dec, num_layers=nl,
-                              dropout=0.1, batch_first=True)
+                              batch_first=True)
         self.out_drop = nn.Dropout(0.35)
         self.out = nn.Linear(self.em_sz_dec, self.voc_sz_dec)
         self.out.weight.data = self.emb_dec.weight.data
@@ -56,4 +61,3 @@ class Seq2SeqRNN_tf(nn.Module):
 
     def initHidden(self, bs):
         return one_param(self).new_zeros(self.nl, bs, self.hidden_layer_size)
-

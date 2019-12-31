@@ -27,8 +27,8 @@ class Seq2SeqDataBunch(TextDataBunch):
         val_bs = ifnone(val_bs, bs)
         collate_fn = partial(seq2seq_collate, pad_idx=pad_idx, pad_first=pad_first, backwards=backwards)
         train_sampler = SortishSampler(datasets[0].x, key=lambda t: len(datasets[0][t][0].data), bs=bs//2)
-        #train_dl = DataLoader(datasets[0], batch_size=bs, sampler=train_sampler, drop_last=True, **dl_kwargs)
-        train_dl = DataLoader(datasets[0], batch_size=bs, drop_last=True, **dl_kwargs)
+        train_dl = DataLoader(datasets[0], batch_size=bs, sampler=train_sampler, drop_last=True, **dl_kwargs)
+        # train_dl = DataLoader(datasets[0], shuffle=True, batch_size=bs, drop_last=True, **dl_kwargs)
         dataloaders = [train_dl]
         for ds in datasets[1:]:
             lengths = [len(t) for t in ds.x.items]

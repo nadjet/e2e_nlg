@@ -3,7 +3,7 @@ import logging
 
 LOGFILE = "/tmp/log.txt"
 
-WRITE_TO_FILE = False
+WRITE_TO_FILE = True
 
 format = '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
 
